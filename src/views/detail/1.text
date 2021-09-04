@@ -1,0 +1,42 @@
+<template>
+  <div>
+    <div>
+      <van-nav-bar :title="proname" left-arrow @click-left="$router.back()">
+        <template #right>
+          <van-icon name="search" size="18" />
+        </template>
+      </van-nav-bar>
+    </div>
+    <div>
+      <van-goods-action>
+        <van-goods-action-icon icon="chat-o" text="客服" badge="" />
+        <van-goods-action-icon icon="cart-o" text="购物车" badge="" />
+        <van-goods-action-icon icon="shop-o" text="店铺" badge="" />
+        <van-goods-action-button type="warning" text="加入购物车" />
+        <van-goods-action-button type="danger" text="立即购买" />
+      </van-goods-action>
+    </div>
+  </div>
+</template>
+<script>
+import { GoodsAction, GoodsActionIcon, GoodsActionButton, Icon, NavBar } from 'vant'
+export default {
+  components: {
+    [GoodsAction.name]: GoodsAction,
+    [GoodsActionIcon.name]: GoodsActionIcon,
+    [GoodsActionButton.name]: GoodsActionButton,
+    [Icon.name]: Icon,
+    [NavBar.name]: NavBar
+  },
+  mounted () {
+    console.log(this.$route.params.proid)
+    this.$http.getProDetail(this.$route.params.proid).then(res => {
+      console.log(res.data.data)
+    })
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
