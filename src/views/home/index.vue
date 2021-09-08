@@ -35,7 +35,7 @@
           </van-pull-refresh>
           <!-- 下拉 e -->
           <!-- 回到顶部 -->
-          <div class="Top" @click="backTop">
+          <div class="Top" @click="backTop" v-if="Top > 600">
             <van-icon name="back-top" size="16"/>
           </div>
         </div>
@@ -68,6 +68,7 @@ export default {
       ],
       ProList: [],
       count: 1,
+      Top: 0,
       loading: false,
       finished: false,
       isLoading: false
@@ -79,11 +80,9 @@ export default {
       .then(res => {
         this.bannerList = res.data.data
       })
-    // this.$http.getProList({ count: 1, limitNum: 6 })
-    //   .then(res => {
-    //     console.log(res.data.data)
-    //     this.proList = res.data.data
-    //   })
+    this.$refs.content.addEventListener('scroll', () => {
+      this.Top = this.$refs.content.scrollTop
+    })
   },
   methods: {
     onLoad () {

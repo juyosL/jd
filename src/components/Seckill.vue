@@ -1,8 +1,10 @@
 <template>
   <div class="Seckill">
+    <!-- 秒杀头部 -->
     <div class="heade">
       <div class="title">海购秒杀</div>
       <div class="nth">{{ hour }}</div>
+      <!-- 倒计时 -->
       <van-count-down :time="time">
         <template #default="timeData">
           <span class="block">{{ timeData.hours }}</span>
@@ -14,7 +16,14 @@
       </van-count-down>
       <p>更多秒杀<van-icon name="clock" /></p>
     </div>
-    <div></div>
+    <!-- 秒杀商品 -->
+    <div class="cont">
+      <div v-for="item in Spikes" :key="item.proid" class="con">
+        <img :src="item.img1">
+        <p>￥{{(item.originprice * item.discount / 10).toFixed(0)}}</p>
+        <del>￥{{item.originprice}}</del>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -22,8 +31,10 @@ import { CountDown, Icon } from 'vant'
 export default {
   data () {
     return {
-      hour: 120 * 1000,
-      time: 0
+      Spikes: [],
+      hour: 0,
+      time: 0,
+      zero: 0
     }
   },
   mounted () {
@@ -32,14 +43,12 @@ export default {
   methods: {
     init () {
       const date = new Date()
-      console.log(date.getFullYear())
       this.hour = date.getHours() % 2 === 0 ? date.getHours() + 2 : date.getHours() - 1
-      this.time = new Date(`${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${date.getHours() % 2 ? date.getHours() + 1 === 24 ? '00' : date.getHours() + 1 : date.getHours() + 2 === 24 ? '00' : date.getHours() + 2}:00:00`).getTime() - date.getTime()
-
+      this.time = new Date(`${date.getFullYear()}/${date.getMonth() + 1}/${date.getHours() + 1 || date.getHours() + 2 ? date.getDate() + 1 : date.getDate()} ${date.getHours() % 2 ? date.getHours() + 1 === 24 ? '00' : date.getHours() + 1 : date.getHours() + 2 === 24 ? '00' : date.getHours() + 2}:00:00`).getTime() - date.getTime()
       // 请求秒杀商品数据
       this.$http.getSeckillList({ count: 1, limitNum: 6 })
         .then(res => {
-          console.log(res.data.data)
+          this.Spikes = res.data.data
         })
     }
   },
@@ -55,6 +64,21 @@ export default {
   margin .1rem
   border-radius .15rem
   background-color #fff
+  .cont
+    display flex
+    justify-content: space-evenly
+    .con
+      width .6rem
+      height .8rem
+      // flex 1
+      del
+        text-align center
+        display block
+      p
+        text-align center
+        color #f2270c
+      img
+        height 100%
   .heade
     height .34rem
     line-height .34rem
@@ -82,6 +106,7 @@ export default {
       font-size .14rem
       margin-left .12rem
       margin-right .12rem
+      font-weight: bold
       display inline-block
     p
       float right

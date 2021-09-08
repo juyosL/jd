@@ -15,10 +15,30 @@ export function getProList (params) {
 export function getProDetail (proid) {
   return request({ url: '/pro/detail/' + proid })
 }
+// 发送手机短信 /user/dosendmsgcode
+export function dosendmsgcode (params) {
+  return request.post('/user/dosendmsgcode', params)
+}
+// 验证验证码 tel手机号,telcode验证码
+export function docheckcode (params) {
+  return request.post('/user/docheckcode', params)
+}
+// 验证手机号是否有
+export function docheckphone (params) {
+  return request.post('/user/docheckphone', params)
+}
+// 设置密码完成注册 tel手机号,password密码
+export function dofinishregister (params) {
+  return request.post('/user/dofinishregister', params)
+}
 // 抛出方法
 export default {
   getBannerList,
   getSeckillList,
   getProList,
-  getProDetail
+  getProDetail,
+  dosendmsgcode,
+  docheckcode,
+  docheckphone,
+  dofinishregister
 }
