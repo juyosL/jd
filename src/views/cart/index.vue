@@ -16,7 +16,7 @@
               <van-swipe-cell>
                 <van-card
                   :num="item.num"
-                  :price="item.originprice * item.discount / 10"
+                  :price="(item.originprice * item.discount / 10).toFixed(2)"
                   :title="item.proname"
                   :origin-price="item.originprice"
                   class="goods-card"
@@ -127,10 +127,10 @@ export default {
       //   localStorage.setItem('time', res.data.time)
       // })
       // 支付时删除勾选商品
-      this.$http.deleteCart({
-        token: localStorage.getItem('token'),
-        userid: localStorage.getItem('userid')
-      })
+      // this.$http.deleteCart({
+      //   token: localStorage.getItem('token'),
+      //   userid: localStorage.getItem('userid')
+      // })
       this.$router.push('/order')
     },
     init () {
@@ -203,7 +203,7 @@ body
   .box
     flex 1
     overflow auto
-    padding-bottom: .5rem
+    padding-bottom: .6rem
     display flex
     flex-direction  column
     .header
@@ -213,6 +213,8 @@ body
       flex 1
       overflow auto
       background-color #f6b6b6
+      .van-row
+        margin .1rem 0
       .van-col--4
         display flex
         justify-content center

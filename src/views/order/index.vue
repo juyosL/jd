@@ -5,40 +5,51 @@
         <van-nav-bar title="填写订单" left-arrow @click-left="$router.back()" />
       </div>
       <div class="content">
-         <van-cell v-if="flag" title="吴勋勋 18813007814"  size="large" is-link label="北京昌平千锋教育" />
-      <van-cell v-else title="请添加收获人信息"  size="large" is-link />
-      <van-card
-        v-for="item of orderlist"
-        :key="item.orderid"
-        :num="item.num"
-        :price="item.originprice"
-        :title="item.proname"
-        :thumb="item.img1"
-      />
+        <van-card
+          v-for="item in orderlist" :key="item.proid"
+          :num="item.num"
+          :price="(item.originprice * item.discount / 10).toFixed(2)"
+          :title="item.proname"
+          :thumb="item.img1"
+        />
       </div>
     </div>
   </div>
 </template>
 <script>
-import { NavBar, AddressList, AddressEdit, Card, Cell } from 'vant'
+import { NavBar, AddressList, AddressEdit, Card } from 'vant'
 export default {
   components: {
     [NavBar.name]: NavBar,
     [AddressList.name]: AddressList,
     [AddressEdit.name]: AddressEdit,
-    [Card.name]: Card,
-    [Cell.name]: Cell
+    [Card.name]: Card
   },
   data () {
     return {
-      flag: false,
       orderlist: []
     }
   },
   mounted () {
+    this.$http.getCartList({
+      token: localStorage.getItem('token'),
+      userid: localStorage.getItem('userid')
+    }).then(res => {
+      res.data.data.map(item => {
+        if (item.flag) {
+          this.orderlist.push(item)
+        }
+      })
+    })
   }
 }
 </script>
 <style lang="stylus" scoped>
-
+.box
+  overflow auto
+  height 100%
+  display flex
+  flex-direction column
+  .content
+    overflow auto
 </style>
