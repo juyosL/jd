@@ -1,29 +1,29 @@
 <template>
   <div>
     <div>
-       <van-nav-bar title="注册" left-arrow @click-left="$router.back()">
-      </van-nav-bar>
-    </div>
-    <div>
        <van-field
           v-model="pwd"
           right-icon="closed-eye"
           placeholder="请设置8-20位登录密码"
         />
-      <van-button round class="btn" block color="#ff6666" @click="next" >下一步</van-button>
+      <van-button round :disabled="flag" class="btn" block color="#ff6666" @click="next" >登录</van-button>
     </div>
   </div>
 </template>
 
 <script>
-import { Field, Button, NavBar, Dialog, CountDown } from 'vant'
+import { Field, Button, Toast, Dialog } from 'vant'
 export default {
+  computed: {
+    flag () {
+      return this.pwd.length < 8
+    }
+  },
   components: {
     [Field.name]: Field,
     [Button.name]: Button,
-    [NavBar.name]: NavBar,
-    [Dialog.Component.name]: Dialog.Component,
-    [CountDown.name]: CountDown
+    [Toast.name]: Toast,
+    [Dialog.name]: Dialog
   },
   data () {
     return {
@@ -39,9 +39,19 @@ export default {
       this.$http.dofinishregister({ tel, password: this.pwd })
         .then(res => {
           if (res.data.code === '200') {
-            console.log('登录页面')
+            // console.log('登录页面')
+            Dialog.confirm({
+              message: '跳转到登录页面'
+            })
+              .then(() => {
+                // on confirm
+                this.$router.go(-3)
+              })
+              .catch(() => {
+                // on cancel
+              })
           } else {
-            console.log(res.data.message)
+            Toast(res.data.message)
           }
         })
     }

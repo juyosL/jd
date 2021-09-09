@@ -44,7 +44,8 @@ const routes = [
     // 注册
     path: '/register',
     name: 'register',
-    component: () => import(/* webpackChunkName: "zc" */'../views/register/index.vue'),
+    redirect: '/register/step1',
+    component: () => import(/* webpackChunkName: "registe" */'../views/register/index.vue'),
     children: [
       {
         path: 'step1',
@@ -62,6 +63,16 @@ const routes = [
         component: () => import('../views/register/index3.vue')
       }
     ]
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import(/* webpackChunkName: "login" */'../views/login/index.vue')
+  },
+  {
+    path: '/order',
+    name: 'Order',
+    component: () => import(/* webpackChunkName: "order" */'../views/order/index.vue')
   },
   {
     // 404页面

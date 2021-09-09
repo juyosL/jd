@@ -1,10 +1,15 @@
 <template>
-  <router-view></router-view>
+  <div>
+      <van-nav-bar title="注册" left-arrow @click-left="$router.back()">
+      </van-nav-bar>
+    <router-view></router-view>
+  </div>
 </template>
 <script>
+import { NavBar } from 'vant'
 export default {
-  mounted () {
-    this.$router.replace('/register/step1')
+  components: {
+    [NavBar.name]: NavBar
   }
 }
 </script>

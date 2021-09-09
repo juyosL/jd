@@ -76,7 +76,7 @@
     <div>
       <van-goods-action>
         <van-goods-action-icon icon="chat-o" text="客服" badge="" />
-        <van-goods-action-icon icon="cart-o" text="购物车" badge="" @click="shopping"/>
+        <van-goods-action-icon icon="cart-o" text="购物车" :badge="badge" @click="flag"/>
         <van-goods-action-icon icon="shop-o" text="店铺" badge="" />
         <van-goods-action-button type="danger" text="已下架" disabled v-if="!commodity.issale"/>
         <van-goods-action-button type="warning" text="加入购物车" v-if="commodity.issale" @click="shopping"/>
@@ -98,7 +98,8 @@ import {
   Swipe,
   SwipeItem,
   Tag,
-  Overlay
+  Overlay,
+  Toast
 } from 'vant'
 export default {
   components: {
@@ -113,7 +114,8 @@ export default {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
     [Tag.name]: Tag,
-    [Overlay.name]: Overlay
+    [Overlay.name]: Overlay,
+    [Toast.name]: Toast
   },
   data () {
     return {
@@ -121,6 +123,7 @@ export default {
       showShare: false,
       show: false,
       current: 0,
+      badge: '',
       options: [
         { name: '微信', icon: 'wechat' },
         { name: '微博', icon: 'weibo' },
@@ -134,9 +137,8 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$route.params.proid)
+    this.init()
     this.$http.getProDetail(this.$route.params.proid).then(res => {
-      console.log(res.data.data)
       this.banners = res.data.data.banners[0].split(',')
       this.commodity = res.data.data
     })
@@ -170,12 +172,40 @@ export default {
     closeOverLay () {
       this.$refs.vdo.pause()
     },
+    // 加入购物车
     shopping () {
-      if (localStorage.getItem('token')) {
+      if (localStorage.getItem('isLogin')) {
+        var token = localStorage.getItem('token')
+        var userid = localStorage.getItem('userid')
+        this.$http.addCart({ token, userid, proid: this.$route.params.proid, num: 1 })
+          .then(res => {
+            console.log(res)
+            // Toast(res.data.message)
+          }).catch(() => { })
         this.$router.push('/cart')
       } else {
-        this.$router.push('/register')
+        this.$router.push('/login')
       }
+    },
+    init () {
+      // 已登录,请求购物车数量,显示
+      if (localStorage.getItem('isLogin')) {
+        this.$http.getCartList({ token: localStorage.getItem('token'), userid: localStorage.getItem('userid') })
+          .then(res => {
+            if (res.data.data.length) {
+              this.badge = 0
+              res.data.data.map(item => {
+                this.badge += item.num
+              })
+            } else {
+              this.badge = res.data.data.length
+            }
+          })
+      }
+    },
+    // 购物车
+    flag () {
+      localStorage.getItem('isLogin') ? this.$router.push('/cart') : this.$router.push('/login')
     }
   }
 }

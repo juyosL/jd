@@ -1,10 +1,6 @@
 <template>
   <div>
     <div>
-       <van-nav-bar title="注册" left-arrow @click-left="$router.back()">
-      </van-nav-bar>
-    </div>
-    <div>
       <van-field
       v-model="sms"
       center
@@ -18,20 +14,23 @@
           </van-button>
         </template>
       </van-field>
-      <van-button round class="btn" block color="#ff6666" @click="next" >下一步</van-button>
+      <van-button round class="btn" :disabled="flag" block color="#ff6666" @click="next" >下一步</van-button>
     </div>
   </div>
 </template>
 
 <script>
-import { Field, Button, NavBar, Dialog, CountDown } from 'vant'
+import { Field, Button, Toast } from 'vant'
 export default {
+  computed: {
+    flag () {
+      return this.sms.length < 4
+    }
+  },
   components: {
     [Field.name]: Field,
     [Button.name]: Button,
-    [NavBar.name]: NavBar,
-    [Dialog.Component.name]: Dialog.Component,
-    [CountDown.name]: CountDown
+    [Toast.name]: Toast
   },
   data () {
     return {
@@ -42,18 +41,19 @@ export default {
     }
   },
   mounted () {
-    // this.sendCode()
+    this.sendCode()
   },
   methods: {
     next () {
       var tel = localStorage.getItem('tel')
+      // 验证码
       this.$http.docheckcode({ tel, telcode: this.sms })
         .then(res => {
           console.log(res)
           if (res.data.code === '10007') {
-            console.log('验证码错误')
+            Toast(res.data.message)
           } else {
-            this.$router.replace('/register/step3')
+            this.$router.push('/register/step3')
           }
         })
     },
@@ -65,18 +65,13 @@ export default {
         })
       this.timer = setInterval(() => {
         if (this.time >= 0) {
-          this.text = this.time
+          this.text = `重新发送(${this.time})`
           this.time--
         } else {
           this.time = 60
           clearTimeout(this.timer)
         }
       }, 1000)
-      setTimeout(() => {
-        clearTimeout(this.timer)
-        this.time = 60
-        this.text = '重新发送'
-      }, 60000)
     }
   }
 }

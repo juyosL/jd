@@ -31,6 +31,42 @@ export function docheckphone (params) {
 export function dofinishregister (params) {
   return request.post('/user/dofinishregister', params)
 }
+// 登录 loginname手机号/账户名/邮箱,password密码
+export function dologin (params) {
+  return request.post('/user/login', params)
+}
+// 添加购物车 token,userid,proid,num
+export function addCart (params) {
+  return request.post('/cart/add', params)
+}
+// 更改商品数量 token,cartid,num
+export function updatenumCart (params) {
+  return request.post('/cart/updatenum', params)
+}
+// 删除购物车一个商品 token,cartid
+export function removeCart (params) {
+  return request.post('/cart/remove', params)
+}
+// 查看购物车 token,userid
+export function getCartList (params) {
+  return request.post('/cart/list', params)
+}
+// 更新当前购物车勾选状态 token,cartid,flag(Boolean)
+export function selectone (params) {
+  return request.post('/cart/selectone', params)
+}
+// 更新购物车所有勾选状态 token,userid,type(Boolean)
+export function selectall (params) {
+  return request.post('/cart/selectall', params)
+}
+// 删除购物车勾选数据 token,userid
+export function deleteCart (params) {
+  return request({ url: '/order/deleteCartItem', params })
+}
+// 添加订单 token,userid
+export function addOrder (params) {
+  return request.post('/order/addOrder', params)
+}
 // 抛出方法
 export default {
   getBannerList,
@@ -40,5 +76,14 @@ export default {
   dosendmsgcode,
   docheckcode,
   docheckphone,
-  dofinishregister
+  dofinishregister,
+  dologin,
+  addCart,
+  getCartList,
+  updatenumCart,
+  removeCart,
+  addOrder,
+  selectone,
+  selectall,
+  deleteCart
 }

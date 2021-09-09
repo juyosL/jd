@@ -1,12 +1,56 @@
 <template>
   <div class="container">
     <div class="box">
-      <header class="header">购物车</header>
+      <header class="header">
+        <van-nav-bar title="购物车" left-arrow @click-left="$router.back()" />
+      </header>
       <div class="content">
+        <!-- 购物车有商品 -->
+        <div v-if="empty.length">
+          <van-row v-for="(item, index) in empty" :key="item.proid">
+            <!-- 多选 -->
+            <van-col span="4">
+              <van-checkbox v-model="item.flag" @click="one(index)"/>
+            </van-col>
+            <van-col span="20">
+              <van-swipe-cell>
+                <van-card
+                  :num="item.num"
+                  :price="item.originprice * item.discount / 10"
+                  :title="item.proname"
+                  :origin-price="item.originprice"
+                  class="goods-card"
+                  :thumb="item.img1"
+                >
+                  <!-- 自增自减 -->
+                  <template #footer>
+                    <van-button size="mini" @click="updata(index, -1)">-</van-button>
+                    <van-button size="mini" @click="updata(index, 1)">+</van-button>
+                  </template>
+                </van-card>
+                <!-- 删除 -->
+                <template #right>
+                  <van-button square text="删除" type="danger" class="delete-button" @click="remover(index)"/>
+                </template>
+              </van-swipe-cell>
+            </van-col>
+          </van-row>
+        </div>
+        <!-- 空购物车 -->
+        <div v-else>
+          <van-empty
+            class="custom-image"
+            image="https://img01.yzcdn.cn/vant/custom-empty-image.png"
+            description="购物车空空如也,快去选购吧"
+          />
+          <van-button type="danger" class="bottom-button" @click="$router.push('/home')">
+            立即选购
+          </van-button>
+        </div>
       </div>
     </div>
     <!-- 底部 SubmitBar -->
-    <van-submit-bar :price="3050" button-text="提交订单" @submit="onSubmit">
+    <van-submit-bar :price="price" button-text="提交订单" @submit="onSubmit">
       <van-checkbox v-model="checked">全选</van-checkbox>
       <template #tip>
         你的收货地址不支持同城送, <span @click="onClickEditAddress">修改地址</span>
@@ -16,26 +60,132 @@
 </template>
 
 <script>
-import { SubmitBar, checkbox } from 'vant'
+import { SubmitBar, checkbox, NavBar, Empty, Button, Col, Row, SwipeCell, Checkbox, Card, Toast } from 'vant'
 export default {
   data () {
     return {
-      checked: false
+      sum: 0,
+      empty: []
     }
   },
   components: {
     [SubmitBar.name]: SubmitBar,
-    [checkbox.name]: checkbox
+    [checkbox.name]: checkbox,
+    [NavBar.name]: NavBar,
+    [Empty.name]: Empty,
+    [Button.name]: Button,
+    [Col.name]: Col,
+    [Row.name]: Row,
+    [SwipeCell.name]: SwipeCell,
+    [Checkbox.name]: Checkbox,
+    [Card.name]: Card,
+    [Toast.name]: Toast
+  },
+  computed: {
+    price () {
+      return this.total() * 100
+    },
+    // 全选
+    checked: {
+      get () {
+        return this.empty.every(item => {
+          return item.flag === true
+        })
+      },
+      set () {
+        // 购物车所有数据变化
+        this.$http.selectall({
+          token: localStorage.getItem('token'),
+          userid: localStorage.getItem('userid'),
+          type: !this.checked
+        })
+        if (this.checked) {
+          this.empty.map(item => {
+            item.flag = false
+          })
+        } else {
+          this.empty.map(item => {
+            item.flag = true
+          })
+        }
+      }
+    }
+  },
+  mounted () {
+    this.init()
   },
   methods: {
     onClickEditAddress () {
     },
+    // 添加订单
     onSubmit () {
+      // 提交订单
+      // this.$http.addOrder({
+      //   token: localStorage.getItem('token'),
+      //   userid: localStorage.getItem('userid')
+      // }).then(res => {
+      //   localStorage.setItem('time', res.data.time)
+      // })
+      // 支付时删除勾选商品
+      this.$http.deleteCart({
+        token: localStorage.getItem('token'),
+        userid: localStorage.getItem('userid')
+      })
+      this.$router.push('/order')
+    },
+    init () {
+      if (localStorage.getItem('isLogin')) {
+        this.$http.getCartList({ token: localStorage.getItem('token'), userid: localStorage.getItem('userid') })
+          .then(res => {
+            if (res.data.data.length) {
+              this.empty = res.data.data
+            } else {
+              this.empty = []
+            }
+          })
+      }
+    },
+    // 删除一条商品
+    remover (index) {
+      this.$http.removeCart({
+        token: localStorage.getItem('token'),
+        cartid: this.empty[index].cartid
+      }).then(res => {
+        Toast('删除成功')
+        this.empty.splice(index, 1)
+      })
+    },
+    // 更改商品数量
+    updata (index, num) {
+      if (this.empty[index].num + num) {
+        this.$http.updatenumCart({
+          token: localStorage.getItem('token'),
+          cartid: this.empty[index].cartid,
+          num: this.empty[index].num + num
+        })
+      }
+      this.init()
+    },
+    // 总价
+    total () {
+      this.sum = 0
+      this.empty.map(item => {
+        this.sum += item.flag ? item.num * (item.originprice * item.discount / 10) : 0
+      })
+      return this.sum
+    },
+    // 勾选商品状态数据改变
+    one (index) {
+      this.$http.selectone({
+        token: localStorage.getItem('token'),
+        cartid: this.empty[index].cartid,
+        flag: this.empty[index].flag
+      })
     }
   }
 }
 </script>
-<style lang="stylus">
+<style lang="stylus" scoped>
 *
   padding 0
   margin 0
@@ -52,6 +202,8 @@ body
   flex-direction column
   .box
     flex 1
+    overflow auto
+    padding-bottom: .5rem
     display flex
     flex-direction  column
     .header
@@ -59,7 +211,20 @@ body
       background-color #ff6666
     .content
       flex 1
+      overflow auto
       background-color #f6b6b6
+      .van-col--4
+        display flex
+        justify-content center
+        height .88rem
+        // height 100%
+      .van-button--mini
+        width .4rem
+      .goods-card
+        margin: 0
+        background-color: @white
+      .delete-button
+        height: 100%
 @media screen and (min-width 960px)
   html
     font-size 100px
