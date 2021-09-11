@@ -63,9 +63,7 @@
       <div></div>
     </div>
     <div class="item_floor">
-      2
     </div>
-    <br><br><br><br><br><br><br><br>
     <!-- 分享 -->
     <van-share-sheet
       v-model="showShare"
@@ -179,10 +177,10 @@ export default {
         var userid = localStorage.getItem('userid')
         this.$http.addCart({ token, userid, proid: this.$route.params.proid, num: 1 })
           .then(res => {
-            console.log(res)
-            // Toast(res.data.message)
+            // console.log(res)
+            Toast(res.data.message)
           }).catch(() => { })
-        this.$router.push('/cart')
+        // this.$router.push('/cart')
       } else {
         this.$router.push('/login')
       }
@@ -192,13 +190,15 @@ export default {
       if (localStorage.getItem('isLogin')) {
         this.$http.getCartList({ token: localStorage.getItem('token'), userid: localStorage.getItem('userid') })
           .then(res => {
-            if (res.data.data.length) {
-              this.badge = 0
-              res.data.data.map(item => {
-                this.badge += item.num
-              })
-            } else {
-              this.badge = res.data.data.length
+            if (res.data.code !== '10020') {
+              if (res.data.data.length) {
+                this.badge = 0
+                res.data.data.map(item => {
+                  this.badge += item.num
+                })
+              } else {
+                this.badge = res.data.data.length
+              }
             }
           })
       }

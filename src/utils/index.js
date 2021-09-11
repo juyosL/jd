@@ -59,13 +59,45 @@ export function selectone (params) {
 export function selectall (params) {
   return request.post('/cart/selectall', params)
 }
-// 删除购物车勾选数据 token,userid
+// 支付 token,userid
 export function deleteCart (params) {
   return request({ url: '/order/deleteCartItem', params })
 }
 // 添加订单 token,userid
 export function addOrder (params) {
   return request.post('/order/addOrder', params)
+}
+// 获取订单
+export function confirmOrder (params) {
+  return request({ url: '/order/confirmOrder', params })
+}
+// 查询默认地址 token,userid
+export function defaultAddress (params) {
+  return request.post('/address/defaultAddress', params)
+}
+// 添加地址 token,userid,name,tel,province,city,county,addressDetail,isDefault
+export function Address (params) {
+  return request.post('/address/add', params)
+}
+// 获取地址列表 token,userid
+export function addressList (params) {
+  return request({ url: '/address/list', params })
+}
+// 修改地址addressid
+export function addUpdate (params) {
+  return request.post('/address/update', params)
+}
+// 删除地址 token,addressid
+export function addDelete (params) {
+  return request.post('/address/delete', params)
+}
+// 修改订单的地址
+export function updateOrder (params) {
+  return request.post('/order/updateOrderAddress', params)
+}
+// 推荐产品
+export function Recommendlist (params) {
+  return request({ url: '/pro/recommendlist', params })
 }
 // 抛出方法
 export default {
@@ -83,7 +115,15 @@ export default {
   updatenumCart,
   removeCart,
   addOrder,
+  confirmOrder,
   selectone,
   selectall,
-  deleteCart
+  deleteCart,
+  defaultAddress,
+  Address,
+  addressList,
+  addUpdate,
+  addDelete,
+  Recommendlist,
+  updateOrder
 }

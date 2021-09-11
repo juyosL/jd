@@ -65,14 +65,28 @@ const routes = [
     ]
   },
   {
+    // 登录
     path: '/login',
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */'../views/login/index.vue')
   },
   {
+    // 订单
     path: '/order',
     name: 'Order',
     component: () => import(/* webpackChunkName: "order" */'../views/order/index.vue')
+  },
+  {
+    // 地址
+    path: '/address',
+    name: 'Address',
+    component: () => import(/* webpackChunkName: "address" */'../views/address/index.vue')
+  },
+  {
+    // 搜索
+    path: '/search',
+    name: 'Search',
+    component: () => import('../views/search/index.vue')
   },
   {
     // 404页面

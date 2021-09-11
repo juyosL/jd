@@ -9,10 +9,10 @@
         <div v-if="empty.length">
           <van-row v-for="(item, index) in empty" :key="item.proid">
             <!-- 多选 -->
-            <van-col span="4">
+            <van-col span="2">
               <van-checkbox v-model="item.flag" @click="one(index)"/>
             </van-col>
-            <van-col span="20">
+            <van-col span="22">
               <van-swipe-cell>
                 <van-card
                   :num="item.num"
@@ -47,6 +47,19 @@
             立即选购
           </van-button>
         </div>
+        <div class="guess">
+          <van-divider>猜你喜欢</van-divider>
+          <!-- <Prolist :ProList=""/> -->
+          <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad"
+          >
+            <!-- <Prolist /> -->
+            <Prolist :count="count" :ProList="relist" />
+          </van-list>
+        </div>
       </div>
     </div>
     <!-- 底部 SubmitBar -->
@@ -60,12 +73,17 @@
 </template>
 
 <script>
-import { SubmitBar, checkbox, NavBar, Empty, Button, Col, Row, SwipeCell, Checkbox, Card, Toast } from 'vant'
+import { Prolist } from '../../components'
+import { SubmitBar, checkbox, NavBar, Empty, Button, Col, Row, SwipeCell, Checkbox, Card, Toast, Divider, List } from 'vant'
 export default {
   data () {
     return {
       sum: 0,
-      empty: []
+      empty: [],
+      relist: [],
+      count: 1,
+      loading: false,
+      finished: false
     }
   },
   components: {
@@ -79,7 +97,10 @@ export default {
     [SwipeCell.name]: SwipeCell,
     [Checkbox.name]: Checkbox,
     [Card.name]: Card,
-    [Toast.name]: Toast
+    [Toast.name]: Toast,
+    [Divider.name]: Divider,
+    [List.name]: List,
+    Prolist
   },
   computed: {
     price () {
@@ -115,23 +136,35 @@ export default {
     this.init()
   },
   methods: {
+    // 推荐商品
+    onLoad () {
+      this.loading = true
+      this.$http.Recommendlist({ count: this.count++ }).then(res => {
+        if (res.data.data.length) {
+          if (this.count - 1 === 1) {
+            this.relist = res.data.data
+          } else {
+            this.relist = [...this.relist, ...res.data.data]
+          }
+        } else {
+          this.finished = true
+        }
+        this.loading = false
+      })
+    },
     onClickEditAddress () {
     },
     // 添加订单
     onSubmit () {
       // 提交订单
-      // this.$http.addOrder({
-      //   token: localStorage.getItem('token'),
-      //   userid: localStorage.getItem('userid')
-      // }).then(res => {
-      //   localStorage.setItem('time', res.data.time)
-      // })
-      // 支付时删除勾选商品
-      // this.$http.deleteCart({
-      //   token: localStorage.getItem('token'),
-      //   userid: localStorage.getItem('userid')
-      // })
-      this.$router.push('/order')
+      this.$http.addOrder({
+        token: localStorage.getItem('token'),
+        userid: localStorage.getItem('userid')
+      }).then(res => {
+        localStorage.setItem('time', res.data.time)
+        this.$router.push('/order')
+        console.log(666)
+      })
     },
     init () {
       if (localStorage.getItem('isLogin')) {
@@ -182,6 +215,11 @@ export default {
         flag: this.empty[index].flag
       })
     }
+    // 猜你喜欢
+    // PList () {
+    //   this.$http.getProList({}).then(res => {
+    //   })
+    // }
   }
 }
 </script>
@@ -213,9 +251,11 @@ body
       flex 1
       overflow auto
       background-color #f6b6b6
+      .guess
+        margin-top .6rem
       .van-row
         margin .1rem 0
-      .van-col--4
+      .van-col--2
         display flex
         justify-content center
         height .88rem

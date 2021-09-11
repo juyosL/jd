@@ -1,7 +1,20 @@
 <template>
   <div class="container">
       <div class="box">
-        <header class="header">首页</header>
+        <header class="header">
+          <div @click="$router.push('/kind')">
+            <van-icon name="wap-nav"  size="24px" color="#f6f5ec"/>
+          </div>
+          <div class="search" @click="$router.push('/search')">
+            <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAeCAMAAABpA6zvAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAzUExURUdwTOo8Puo7Peo7Pek7Peo7Pe0/Qek7PvE+SP9SUuo7Peo7Peo7Pus8P+o7Peo7Pek7PZSxd20AAAAQdFJOUwBV8eG+hyGkEQbGmWs/rthNA0r+AAAA5klEQVQ4y63T0RaDIAgAUEDRUjP//2u3CI/T1vJhvM3uVBAANGx5xwLgiwSZ3TI6uMYANSyuc7AUs03CUvgHRMTEflcZ76FezDGJTE/wTYNI9whhDePhNxAcDVveQWDJbgK6Y8FPQDBH2WdgPlZmYNQvj5D7tP8Ap4+2s8lQX56g4AK34bGPshJ8gbl/wrXoASOUDanlgvVFB3g2T5sGZ2on9xCp23BJ8tusPVzw7O/zhuxtHSIZDYGRo891WUemjeVZgsu4kmY8ju8Ifb2f/i3WV+/gzq0Zgs0xba0eHCSsj4zLR91f1fAfiWsqzlEAAAAASUVORK5CYII=" alt=""></p>
+            <span>|</span>
+            <van-icon name="search" size="18px" color="#999"/>
+            <span style="color:#999">游戏主机</span>
+          </div>
+          <div @click="$router.push('/login')" class="shortcut">
+            <h2>登录</h2>
+          </div>
+        </header>
         <div class="content" ref="content">
           <!-- 下拉 s -->
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
@@ -147,7 +160,37 @@ body
     flex-direction  column
     .header
       height .44rem
-      background-color #ff6666
+      display flex
+      align-items: center
+      flex-wrap: wrap
+      background-color #f1503b
+      .van-icon-wap-nav
+        padding 0 .1rem
+        line-height .44rem
+      .search
+        width 2.8rem
+        display flex
+        border-radius: 22px
+        align-items: center
+        background #fff
+        height .35rem
+        p
+          padding 0 .1rem
+          img
+            height .15rem
+        span
+          color #ddd
+        .van-icon-search
+          padding 0 .1rem
+      .shortcut
+        color #f6f5ec
+        width .5rem
+        display flex
+        align-items center
+        justify-content center
+        h2
+          font-size .14rem
+          font-weight normal
     .content
       flex 1
       // height 5.73rem
