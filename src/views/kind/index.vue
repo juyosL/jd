@@ -16,12 +16,15 @@
       <div class="content">
         <div class="left">
           <van-sidebar v-model="activeKey">
-            <van-sidebar-item :title="item" v-for="(item, index) in Spulist" :key="index" />
+            <van-sidebar-item :title="item" v-for="(item, index) in Spulist" :key="index" @click="toSku"/>
           </van-sidebar>
         </div>
         <div class="right">
           <ul>
-            <li></li>
+            <li v-for="(item, index) in Skulist" :key="index">
+              <img src="//img14.360buyimg.com/focus/s140x140_jfs/t27136/183/1628977274/31007/a6f7ed55/5be6ebd8Nb07ef492.png" alt="">
+              <p v-text="item.brand"></p>
+            </li>
           </ul>
         </div>
       </div>
@@ -43,13 +46,24 @@ export default {
   data () {
     return {
       activeKey: 0,
-      Spulist: []
+      Spulist: [],
+      Skulist: []
     }
   },
   mounted () {
     this.$http.SPU().then(res => {
       this.Spulist = res.data.data
+      this.toSku(0)
     })
+  },
+  methods: {
+    toSku (index) {
+      this.$http.SKU({ category: this.Spulist[index] })
+        .then(res => {
+          console.log(res)
+          this.Skulist = res.data.data
+        })
+    }
   }
 }
 </script>
@@ -98,4 +112,17 @@ export default {
         width 100%
         height 100%
         background-color #fff
+        ul
+          display flex
+          flex-wrap wrap
+          li
+            width .8rem
+            height 1rem
+            display flex
+            flex-direction column
+            justify-content center
+            align-items center
+            margin .1rem .1rem
+            img
+              height 80%
 </style>
