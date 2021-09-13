@@ -11,20 +11,39 @@
       </router-link>
       <router-link to="/cart" tag="li">
         <span class="iconfont icon-gouwuche"></span>
-        <p>购物车</p>
+        <p>购物车{{cartList}}</p>
       </router-link>
-      <router-link to="/user" tag="li">
+      <router-link to="/user" tag="li" v-if="isLogin">
         <span class="iconfont icon-wode"></span>
         <p>我的</p>
+      </router-link>
+      <router-link to="/login" tag="li" v-else>
+        <span class="iconfont icon-wode"></span>
+        <p>未登录</p>
       </router-link>
     </ul>
   </footer>
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 export default {
   // 开启命名空间
-  namespaced: true
+  namespaced: true,
+  computed: {
+    ...mapState({
+      isLogin: state => state.user.isLogin,
+      cartList: state => state.cart.cartList
+    })
+  },
+  mounted () {
+    this.init({ userid: localStorage.getItem('userid') })
+  },
+  methods: {
+    ...mapActions({
+      init: 'cart/init'
+    })
+  }
 }
 
 </script>

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="box">
       <header class="header">
-        <van-nav-bar title="购物车" left-arrow @click-left="$router.back()" />
+        <van-nav-bar :title="'购物车('+ cartList + ')'" left-arrow @click-left="$router.back()" />
       </header>
       <div class="content">
         <!-- 购物车有商品 -->
@@ -74,6 +74,7 @@
 
 <script>
 import { Prolist } from '../../components'
+import { mapState, mapActions } from 'vuex'
 import { SubmitBar, checkbox, NavBar, Empty, Button, Col, Row, SwipeCell, Checkbox, Card, Toast, Divider, List } from 'vant'
 export default {
   data () {
@@ -103,6 +104,9 @@ export default {
     Prolist
   },
   computed: {
+    ...mapState({
+      cartList: state => state.cart.cartList
+    }),
     price () {
       return this.total() * 100
     },
@@ -136,6 +140,9 @@ export default {
     this.init()
   },
   methods: {
+    ...mapActions({
+      initn: 'cart/init'
+    }),
     // 推荐商品
     onLoad () {
       this.loading = true
@@ -163,18 +170,18 @@ export default {
       }).then(res => {
         localStorage.setItem('time', res.data.time)
         this.$router.push('/order')
-        console.log(666)
       })
     },
     init () {
       if (localStorage.getItem('isLogin')) {
         this.$http.getCartList({ token: localStorage.getItem('token'), userid: localStorage.getItem('userid') })
           .then(res => {
-            if (res.data.data.length) {
+            if (res.data.data && res.data.data.length > 0) {
               this.empty = res.data.data
             } else {
               this.empty = []
             }
+            this.initn({ userid: localStorage.getItem('userid') })
           })
       }
     },

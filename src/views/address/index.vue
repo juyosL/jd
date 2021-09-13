@@ -65,7 +65,6 @@ export default {
         token: localStorage.getItem('token'),
         userid: localStorage.getItem('userid')
       }).then(res => {
-        console.log(res)
         var i = 0
         res.data.data.map(item => {
           item.id = i++
@@ -86,11 +85,11 @@ export default {
     },
     onEdit (item, index) {
       // this.list[index].
+      this.chosenAddressId = index
       this.show = !this.show
       this.flag = false
     },
     onSave (content) {
-      console.log(content)
       if (this.flag) {
         // 添加地址
         this.$http.Address({
@@ -106,7 +105,7 @@ export default {
         }).then(res => {
           this.show = false
           Toast('添加成功')
-          console.log('添加成功', res)
+          console.log('添加成功')
           this.$router.back()
           // 不跳转,返回订单,就使用
           // this.list = []
@@ -126,7 +125,7 @@ export default {
           isDefault: content.isDefault
         }).then(res => {
           Toast('修改成功')
-          console.log('修改成功', res)
+          console.log('修改成功')
           this.show = false
           this.$router.back()
           // 不跳转,返回订单,就使用

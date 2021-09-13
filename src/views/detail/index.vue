@@ -74,7 +74,7 @@
     <div>
       <van-goods-action>
         <van-goods-action-icon icon="chat-o" text="客服" badge="" />
-        <van-goods-action-icon icon="cart-o" text="购物车" :badge="badge" @click="flag"/>
+        <van-goods-action-icon icon="cart-o" text="购物车" :badge="cartList" @click="flag"/>
         <van-goods-action-icon icon="shop-o" text="店铺" badge="" />
         <van-goods-action-button type="danger" text="已下架" disabled v-if="!commodity.issale"/>
         <van-goods-action-button type="warning" text="加入购物车" v-if="commodity.issale" @click="shopping"/>
@@ -99,6 +99,7 @@ import {
   Overlay,
   Toast
 } from 'vant'
+import { mapState, mapActions } from 'vuex'
 export default {
   components: {
     [GoodsAction.name]: GoodsAction,
@@ -121,7 +122,6 @@ export default {
       showShare: false,
       show: false,
       current: 0,
-      badge: '',
       options: [
         { name: '微信', icon: 'wechat' },
         { name: '微博', icon: 'weibo' },
@@ -134,14 +134,22 @@ export default {
       commodity: []
     }
   },
+  computed: {
+    ...mapState({
+      cartList: state => state.cart.cartList
+    })
+  },
   mounted () {
-    this.init()
+    this.init({ userid: localStorage.getItem('userid') })
     this.$http.getProDetail(this.$route.params.proid).then(res => {
       this.banners = res.data.data.banners[0].split(',')
       this.commodity = res.data.data
     })
   },
   methods: {
+    ...mapActions({
+      init: 'cart/init'
+    }),
     // 分享
     moreEvent (action, index) {
       console.log(index, action)
@@ -184,25 +192,26 @@ export default {
       } else {
         this.$router.push('/login')
       }
+      this.init({ userid: localStorage.getItem('userid') })
     },
-    init () {
-      // 已登录,请求购物车数量,显示
-      if (localStorage.getItem('isLogin')) {
-        this.$http.getCartList({ token: localStorage.getItem('token'), userid: localStorage.getItem('userid') })
-          .then(res => {
-            if (res.data.code !== '10020') {
-              if (res.data.data.length) {
-                this.badge = 0
-                res.data.data.map(item => {
-                  this.badge += item.num
-                })
-              } else {
-                this.badge = res.data.data.length
-              }
-            }
-          })
-      }
-    },
+    // init () {
+    //   // 已登录,请求购物车数量,显示
+    //   if (localStorage.getItem('isLogin')) {
+    //     this.$http.getCartList({ token: localStorage.getItem('token'), userid: localStorage.getItem('userid') })
+    //       .then(res => {
+    //         if (res.data.code !== '10020') {
+    //           if (res.data.data.length) {
+    //             this.badge = 0
+    //             res.data.data.map(item => {
+    //               this.badge += item.num
+    //             })
+    //           } else {
+    //             this.badge = res.data.data.length
+    //           }
+    //         }
+    //       })
+    //   }
+    // },
     // 购物车
     flag () {
       localStorage.getItem('isLogin') ? this.$router.push('/cart') : this.$router.push('/login')

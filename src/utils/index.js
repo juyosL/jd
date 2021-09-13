@@ -99,6 +99,34 @@ export function updateOrder (params) {
 export function Recommendlist (params) {
   return request({ url: '/pro/recommendlist', params })
 }
+// 热门搜索
+export function Hostword () {
+  return request({ url: '/pro/hotword' })
+}
+// 搜索列表 count,limitNum,keyword
+export function Prosearch (params) {
+  return request({ url: '/pro/search', params })
+}
+// 获取用户信息 userid token
+export function Getuser (params) {
+  return request({ url: '/user/info', params })
+}
+// 绑定用户名
+export function bindusername (params) {
+  return request.post('/user/bindusername', params)
+}
+// 修改密码
+export function updatePassword (params) {
+  return request.post('/user/updatePassword', params)
+}
+// 产品分类(SPU)
+export function SPU () {
+  return request({ url: '/pro/categorylist' })
+}
+// 小分类(SKU) category
+export function SKU (params) {
+  return request({ url: '/pro/categorybrandlist', params })
+}
 // 抛出方法
 export default {
   getBannerList,
@@ -125,5 +153,12 @@ export default {
   addUpdate,
   addDelete,
   Recommendlist,
-  updateOrder
+  updateOrder,
+  Prosearch,
+  Hostword,
+  Getuser,
+  bindusername,
+  updatePassword,
+  SPU,
+  SKU
 }

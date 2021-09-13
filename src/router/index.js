@@ -86,7 +86,18 @@ const routes = [
     // 搜索
     path: '/search',
     name: 'Search',
-    component: () => import('../views/search/index.vue')
+    component: () => import(/* webpackChunkName: "search" */'../views/search/index.vue')
+  },
+  {
+    // 搜索详情
+    path: '/hresult/:keyword',
+    name: 'Hresult',
+    component: () => import(/* webpackChunkName: "hresult" */'../views/hresult/index.vue')
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: () => import(/* webpackChunkName: "settings" */'../views/settings/index.vue')
   },
   {
     // 404页面

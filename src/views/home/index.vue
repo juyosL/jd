@@ -12,7 +12,8 @@
             <span style="color:#999">游戏主机</span>
           </div>
           <div @click="$router.push('/login')" class="shortcut">
-            <h2>登录</h2>
+            <h2 v-if="isLogin">张三</h2>
+            <h2 v-else>登录</h2>
           </div>
         </header>
         <div class="content" ref="content">
@@ -60,7 +61,7 @@
 <script>
 import { Swipe, SwipeItem, Grid, GridItem, List, PullRefresh, Icon } from 'vant'
 import { Tabbar, Prolist, Seckill } from '@/components'
-
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -86,6 +87,11 @@ export default {
       finished: false,
       isLoading: false
     }
+  },
+  computed: {
+    ...mapState({
+      isLogin: state => state.user.isLogin
+    })
   },
   mounted () {
     // 请求轮播图

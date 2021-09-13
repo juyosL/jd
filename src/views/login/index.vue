@@ -1,8 +1,7 @@
 <template>
   <div>
     <div>
-       <van-nav-bar title="登录" left-arrow @click-left="$router.back()">
-      </van-nav-bar>
+       <van-nav-bar title="登录" left-arrow @click-left="$router.back()"/>
     </div>
     <div>
       <van-field
@@ -23,6 +22,7 @@
 
 <script>
 import { Field, Button, NavBar, Toast, Dialog } from 'vant'
+import { mapActions } from 'vuex'
 export default {
   components: {
     [Field.name]: Field,
@@ -42,28 +42,33 @@ export default {
     this.loginname = localStorage.getItem('tel') ? localStorage.getItem('tel') : ''
   },
   methods: {
+    ...mapActions({
+      loginAction: 'user/loginAction'
+    }),
     next () {
-      this.$http.dologin({ loginname: this.loginname, password: this.pwd })
-        .then(res => {
-          console.log(res)
-          if (res.data.code === '200') {
-            Toast(res.data.message)
-            localStorage.setItem('isLogin', true) // 前端校验登录的方式
-            localStorage.setItem('token', res.data.data.token)
-            localStorage.setItem('userid', res.data.data.userid)
-            this.$router.back()
-          } else if (res.data.code === '10010') {
-            Dialog.confirm({ message: '该用户不存在,手机号未注册,是否去注册' })
-              .then(() => {
-                // on confirm
-                this.$router.push('/register/step1')
-              })
-              .catch(() => { })
-          } else {
-            Toast(res.data.message)
-            this.$router.back()
-          }
-        })
+      this.loginAction({ loginname: this.loginname, password: this.pwd })
+      // this.$http.dologin({ loginname: this.loginname, password: this.pwd })
+      //   .then(res => {
+      //     console.log(res)
+      //     if (res.data.code === '200') {
+      //       Toast(res.data.message)
+      //       localStorage.setItem('isLogin', true) // 前端校验登录的方式
+      //       localStorage.setItem('token', res.data.data.token)
+      //       localStorage.setItem('userid', res.data.data.userid)
+      //       this.$store.commit('changeLoginState', true)
+      //       this.$router.back()
+      //     } else if (res.data.code === '10010') {
+      //       Dialog.confirm({ message: '该用户不存在,手机号未注册,是否去注册' })
+      //         .then(() => {
+      //           // on confirm
+      //           this.$router.push('/register/step1')
+      //         })
+      //         .catch(() => { })
+      //     } else {
+      //       Toast(res.data.message)
+      //       // this.$router.back()
+      //     }
+      //   })
     }
   }
 }

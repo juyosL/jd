@@ -113,9 +113,7 @@ export default {
         county: this.list[0].county,
         addressDetail: this.list[0].addressDetail,
         time: localStorage.getItem('time')
-      }).then(res => {
-        console.log(res)
-      })
+      }).then(res => {})
     },
     onAdd () {
       this.$router.push('/address')
@@ -129,9 +127,9 @@ export default {
       }).then(() => {
         this.$http.deleteCart({
           userid: localStorage.getItem('userid')
-        }).then((res) => {
-          console.log(res)
+        }).then(() => {
           Toast('支付成功')
+          this.orderlist = []
         }).catch(error => {
           console.log(error)
         })
@@ -146,7 +144,7 @@ export default {
   height 100%
   display flex
   .header
-    overflow hidden
+    // overflow hidden
     .van-address-list
       padding-bottom .3rem
     .van-address-list__bottom
