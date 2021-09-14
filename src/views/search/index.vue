@@ -22,7 +22,7 @@
             v-for="(item, index) in record"
             :key="index"
             :text="item"
-            @click="$router.push({ name: 'Hresult', params: { keyword: item } })"
+            @click="$router.replace({ name: 'Hresult', params: { keyword: item } })"
             />
           </div>
         </div>
@@ -34,7 +34,7 @@
           v-for="(item, index) in host"
           :key="index"
           :text="item.keyword"
-          @click="$router.push({ name: 'Hresult', params: { keyword: item.keyword } })"
+          @click="$router.replace({ name: 'Hresult', params: { keyword: item.keyword } })"
           />
         </div>
       </div>
@@ -43,6 +43,7 @@
 </template>
 <script>
 import { NavBar, Button, Search, Icon } from 'vant'
+import { mapMutations } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -63,6 +64,9 @@ export default {
     this.hostseach()
   },
   methods: {
+    ...mapMutations({
+      Changestate: 'hresult/Changestate'
+    }),
     toHresult () {
       if (this.keyword !== '') {
         // 历史记录
@@ -77,7 +81,7 @@ export default {
           localStorage.setItem('record', JSON.stringify([this.keyword]))
         }
         // 搜索
-        this.$router.push({ name: 'Hresult', params: { keyword: this.keyword } })
+        this.$router.replace({ name: 'Hresult', params: { keyword: this.keyword } })
       } else {
         console.log('不能为空')
       }
@@ -90,6 +94,7 @@ export default {
     hostseach () {
       this.$http.Hostword().then(res => {
         this.host = res.data.data
+        this.Changestate(true)
       })
     }
   }

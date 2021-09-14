@@ -5,7 +5,7 @@
         <!-- header s -->
         <van-nav-bar left-arrow @click-left="$router.back()" click-right>
           <template #title>
-            <div class="search" @click="$router.back()">
+            <div class="search" @click="$router.push('/search')">
                 <van-icon name="search" size="18px" color="#999"/>
                 <span style="color:#999" >游戏主机</span>
             </div>
@@ -21,7 +21,7 @@
         </div>
         <div class="right">
           <ul>
-            <li v-for="(item, index) in Skulist" :key="index">
+            <li v-for="(item, index) in Skulist" :key="index" @click="toHresult(item.brand)">
               <img src="//img14.360buyimg.com/focus/s140x140_jfs/t27136/183/1628977274/31007/a6f7ed55/5be6ebd8Nb07ef492.png" alt="">
               <p v-text="item.brand"></p>
             </li>
@@ -34,6 +34,7 @@
 </template>
 <script>
 import { Tabbar } from '@/components'
+import { mapMutations } from 'vuex'
 import { NavBar, Icon, Sidebar, SidebarItem } from 'vant'
 export default {
   components: {
@@ -57,12 +58,20 @@ export default {
     })
   },
   methods: {
+    ...mapMutations({
+      Changestate: 'hresult/Changestate'
+    }),
     toSku (index) {
       this.$http.SKU({ category: this.Spulist[index] })
         .then(res => {
           console.log(res)
           this.Skulist = res.data.data
         })
+    },
+    toHresult (brand) {
+      this.Changestate(false)
+      var keyword = `${this.Spulist[this.activeKey]},${brand}`
+      this.$router.push({ name: 'Hresult', params: { keyword } })
     }
   }
 }

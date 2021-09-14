@@ -2,7 +2,7 @@
   <div>
     <van-nav-bar left-arrow @click-left="$router.back()" click-right>
       <template #title>
-        <div class="search" @click="$router.back()">
+        <div class="search" @click="$router.push('/search')">
             <van-icon name="search" size="18px" color="#999"/>
             <span style="color:#999" >游戏主机</span>
         </div>
@@ -49,6 +49,7 @@
 </template>
 <script>
 import { Prolist } from '../../components'
+import { mapState } from 'vuex'
 import { NavBar, Button, Search, Icon, DropdownMenu, DropdownItem, Cell, Divider, List, Empty } from 'vant'
 export default {
   components: {
@@ -84,8 +85,14 @@ export default {
         { text: '默认排序', value: 'a' },
         { text: '销量升序', value: 'b' },
         { text: '销量降序', value: 'c' }
-      ]
+      ],
+      path: ''
     }
+  },
+  computed: {
+    ...mapState({
+      Classification: state => state.hresult.Classification
+    })
   },
   mounted () {
     this.onLoad()
@@ -112,22 +119,38 @@ export default {
       this.inp = []
       this.$refs.dropdownitem.toggle()
     },
+    // 数据校验
+    info (res) {
+      if (res.data.code === '200') {
+        if (this.count - 1 === 1) {
+          this.ProList = res.data.data
+        } else {
+          this.ProList = [...this.ProList, ...res.data.data]
+        }
+        this.newProList = JSON.parse(JSON.stringify(this.ProList))
+      } else {
+        this.finished = true
+      }
+      this.loading = false
+    },
     // 商品更新
     onLoad () {
-      this.loading = true
-      this.$http.Prosearch({ count: this.count++, keyword: this.$route.params.keyword }).then(res => {
-        if (res.data.code === '200') {
-          if (this.count - 1 === 1) {
-            this.ProList = res.data.data
-          } else {
-            this.ProList = [...this.ProList, ...res.data.data]
-          }
-          this.newProList = JSON.parse(JSON.stringify(this.ProList))
-        } else {
-          this.finished = true
-        }
-        this.loading = false
-      })
+      console.log(this.Classification, this.$route.params)
+      // this.loading = true
+      if (this.Classification) {
+        this.$http.Prosearch({ count: this.count++, keyword: this.$route.params.keyword }).then(res => {
+          this.info(res)
+        })
+      } else {
+        this.$http.Brandprolist({
+          count: this.count++,
+          limitNum: 10,
+          category: this.$route.params.keyword.split(',')[0],
+          brand: this.$route.params.keyword.split(',')[1]
+        }).then(res => {
+          this.info(res)
+        })
+      }
     }
   }
 }

@@ -127,6 +127,10 @@ export function SPU () {
 export function SKU (params) {
   return request({ url: '/pro/categorybrandlist', params })
 }
+// 获取分类下品牌数据count,limitNum,category,brand
+export function Brandprolist (params) {
+  return request({ url: '/pro/categorybrandprolist', params })
+}
 // 抛出方法
 export default {
   getBannerList,
@@ -160,5 +164,6 @@ export default {
   bindusername,
   updatePassword,
   SPU,
-  SKU
+  SKU,
+  Brandprolist
 }

@@ -13,28 +13,67 @@
         <van-icon name="setting-o" size="24" @click="$router.push('/settings')"/>
       </header>
       <div class="content">
-        <div>钱包
-          <van-icon name="logistics" />
-          <van-icon name="shopping-cart-o" />
-          <van-icon name="description" />
+        <div class="option">
+          <div @click="show = !show">
+            <van-icon name="logistics" size="24"/>
+            <p>运输</p>
+          </div>
+          <div>
+            <van-icon name="location-o" size="24" @click="$router.push('/address')"/>
+            <p>地址</p>
+          </div>
+          <div>
+            <van-icon name="shopping-cart-o" size="24" @click="$router.push('/cart')"/>
+            <p>购物车</p>
+          </div>
+          <div>
+            <van-icon name="description" size="24"/>
+            <p>我的订单</p>
+          </div>
         </div>
-        <div> 金豆</div>
+        <div class="option">
+        </div>
+        <div class="option">
+        </div>
+        <!-- <div class="Btmoption">
+        </div> -->
       </div>
     </div>
+    <van-popup v-model="show" position="bottom" :style="{ height: '30%' }">
+      <van-steps direction="vertical" :active="0">
+        <van-step>
+          <h3>【{{address.split(' ')[1]}}】物流运送中</h3>
+          <p>2016-07-12 12:40</p>
+        </van-step>
+        <van-step>
+          <h3>【{{address.split(' ')[0]}}】物流运送至【{{address.split(' ')[1]}}】</h3>
+          <p>2016-07-11 10:00</p>
+        </van-step>
+        <van-step>
+          <h3>快件已发货</h3>
+          <p>2016-07-10 09:30</p>
+        </van-step>
+      </van-steps>
+    </van-popup>
     <Tabbar/>
   </div>
 </template>
 <script>
 import { Tabbar } from '@/components'
-import { Icon } from 'vant'
+import { Icon, Popup, Step, Steps } from 'vant'
 export default {
   components: {
     Tabbar,
-    [Icon.name]: Icon
+    [Icon.name]: Icon,
+    [Popup.name]: Popup,
+    [Step.name]: Step,
+    [Steps.name]: Steps
   },
   data () {
     return {
-      information: {}
+      information: {},
+      show: false,
+      address: ''
     }
   },
   mounted () {
@@ -43,22 +82,18 @@ export default {
         console.log(res.data.data)
         this.information = res.data.data[0]
       })
+    this.$http.confirmOrder({
+      userid: localStorage.getItem('userid'),
+      time: localStorage.getItem('time')
+    }).then(res => {
+      this.address = `${res.data.address.province} ${res.data.address.city} ${res.data.address.county} ${res.data.address.addressDetail} `
+      // console.log(res, this.address, res.data.data)
+    })
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-*
-  padding 0
-  margin 0
-  list-style none
-html
-  font-size 26.6666667vw
-html,body,.container
-  width 100%
-  height 100%
-body
-  font-size .12rem
 .container
   display flex
   flex-direction column
@@ -92,4 +127,19 @@ body
     .content
       flex 1
       background-color #f6b6b6
+      .option
+        display flex
+        justify-content space-around
+        align-items center
+        height 80px
+        background-color #fff
+        margin 10px 10px
+        border-radius 10px
+        div
+          display flex
+          align-items: center
+          flex-direction: column
+      // .Btmoption
+      //   position absolute
+      //   bottom 0
 </style>
