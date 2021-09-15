@@ -29,6 +29,7 @@
 </template>
 <script>
 import { NavBar, AddressList, AddressEdit, Card, Dialog, SubmitBar, Toast } from 'vant'
+import { mapState, mapMutations } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -55,6 +56,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      newAddress: state => state.address.newAddress
+    }),
     total () {
       return this.orderlist.reduce((sum, item) => {
         return sum + item.originprice * item.num
@@ -84,24 +88,37 @@ export default {
         }).catch(() => {})
       } else {
         // 有数据
-        this.$http.defaultAddress({
-          userid: localStorage.getItem('userid')
-        }).then(item => {
-          // 判断有没有默认地址,没有就使用最新添加的地址
-          if (item.data.data.length === 0) {
-            this.list.splice(0, 1, res.data.data[res.data.data.length - 1])
-          } else {
-            // 有就直接使用
-            this.list = item.data.data
-          }
+        // console.log(this.newAddress !== '')
+        if (this.newAddress !== '') {
+          var i = res.data.data.find(item => {
+            return item.addressid === this.newAddress
+          })
+          this.list.splice(0, 1, i)
           this.combinedAddress()
-        })
+        } else {
+          this.$http.defaultAddress({
+            userid: localStorage.getItem('userid')
+          }).then(item => {
+            // 判断有没有默认地址,没有就使用最新添加的地址
+            if (item.data.data.length === 0) {
+              this.list.splice(0, 1, res.data.data[res.data.data.length - 1])
+            } else {
+              // 有就直接使用
+              this.list = item.data.data
+            }
+            this.combinedAddress()
+          })
+        }
       }
     })
   },
   methods: {
+    ...mapMutations({
+      upaddress: 'address/upaddress'
+    }),
     // 拼接地址,并且给订单添加上地址
     combinedAddress () {
+      // console.log(this.list)
       this.list[0].address = this.list[0].province + this.list[0].county + this.list[0].city + this.list[0].addressDetail
       // 添加地址
       this.$http.updateOrder({

@@ -13,13 +13,15 @@
           @add="onAdd"
           @edit="onEdit"
         />
-
+        <van-button round block type="info" native-type="submit" @click="Icommit">确认</van-button>
         <van-popup v-model="show" position="bottom" :style="{ height: '60%' }">
           <van-address-edit
             :area-list="areaList"
             show-delete
             show-set-default
             show-search-result
+            :save-button-text="flag ? '保存': '修改'"
+            :address-info="addrssinfo"
             :search-result="searchResult"
             :area-columns-placeholder="['请选择', '请选择', '请选择']"
             @save="onSave"
@@ -32,8 +34,9 @@
   </div>
 </template>
 <script>
-import { NavBar, AddressList, AddressEdit, Card, Popup, Dialog, Toast } from 'vant'
+import { NavBar, AddressList, AddressEdit, Card, Popup, Dialog, Toast, Button } from 'vant'
 import { areaList } from '@vant/area-data'
+import { mapState, mapMutations } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -42,24 +45,34 @@ export default {
     [Card.name]: Card,
     [Popup.name]: Popup,
     [Dialog.name]: Dialog,
-    [Toast.name]: Toast
+    [Toast.name]: Toast,
+    [Button.name]: Button
   },
   data () {
     return {
       orderlist: [],
       areaList,
       searchResult: [],
-      chosenAddressId: '1',
+      chosenAddressId: 0,
+      addrssinfo: {},
       list: [],
       show: false,
       // true添加,false修改
       flag: false
     }
   },
+  computed: {
+    ...mapState({
+      newAddress: state => state.address.newAddress
+    })
+  },
   mounted () {
     this.init()
   },
   methods: {
+    ...mapMutations({
+      upaddress: 'address/upaddress'
+    }),
     init () {
       this.$http.addressList({
         token: localStorage.getItem('token'),
@@ -68,6 +81,7 @@ export default {
         var i = 0
         res.data.data.map(item => {
           item.id = i++
+          item.address = item.province + item.county + item.city + item.addressDetail
           if (item.isDefault) {
             this.list.push(item)
           }
@@ -85,6 +99,7 @@ export default {
     },
     onEdit (item, index) {
       // this.list[index].
+      this.addrssinfo = item
       this.chosenAddressId = index
       this.show = !this.show
       this.flag = false
@@ -105,8 +120,13 @@ export default {
         }).then(res => {
           this.show = false
           Toast('添加成功')
-          console.log('添加成功')
-          this.$router.back()
+          console.log('添加成功', res)
+          this.$http.addressList({
+            userid: localStorage.getItem('userid')
+          }).then(res => {
+            this.upaddress(res.data.data[res.data.data.length - 1].addressid)
+            this.$router.back()
+          })
           // 不跳转,返回订单,就使用
           // this.list = []
           // this.init()
@@ -126,8 +146,10 @@ export default {
         }).then(res => {
           Toast('修改成功')
           console.log('修改成功')
+          this.list = []
+          this.init()
           this.show = false
-          this.$router.back()
+          // this.$router.back()
           // 不跳转,返回订单,就使用
           // this.list = []
           // this.init()
@@ -147,6 +169,11 @@ export default {
         this.init()
       })
     },
+    // 手动选择地址
+    Icommit () {
+      this.upaddress(this.list[this.chosenAddressId].addressid)
+      this.$router.back()
+    },
     onChangeDetail () {}
   }
 }
@@ -164,4 +191,10 @@ export default {
   .content
     padding-bottom .5rem
     overflow auto
+    .van-button--info
+      position absolute
+      margin-left .14rem
+      margin-bottom .5rem
+      width 3.42rem
+      bottom 0
 </style>

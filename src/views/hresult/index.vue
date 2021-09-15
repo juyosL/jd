@@ -94,6 +94,19 @@ export default {
       Classification: state => state.hresult.Classification
     })
   },
+  watch: {
+    $route: {
+      handler (newVal, oldVal) {
+        this.count = 1
+        this.onLoad()
+      }
+    },
+    immediate: true
+  },
+  // beforeRouteUpdate (to, from, next) {
+  //   this.onLoad()
+  //   next()
+  // },
   mounted () {
     this.onLoad()
   },
@@ -135,7 +148,7 @@ export default {
     },
     // 商品更新
     onLoad () {
-      console.log(this.Classification, this.$route.params)
+      // console.log(this.Classification, this.$route.params)
       // this.loading = true
       if (this.Classification) {
         this.$http.Prosearch({ count: this.count++, keyword: this.$route.params.keyword }).then(res => {
@@ -151,6 +164,7 @@ export default {
           this.info(res)
         })
       }
+      this.$forceUpdate()
     }
   }
 }

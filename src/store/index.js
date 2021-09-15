@@ -3,11 +3,13 @@ import Vuex from 'vuex'
 import user from './modules/user'
 import cart from './modules/cart'
 import hresult from './modules/hresult'
+import address from './modules/address'
 Vue.use(Vuex)
 export default new Vuex.Store({
   modules: {
     user,
     cart,
-    hresult
+    hresult,
+    address
   }
 })

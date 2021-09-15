@@ -1,5 +1,6 @@
 module.exports = function () {
     return {
+        publicPath: './',
         devServer: {
             open: true,
             port: 8080,

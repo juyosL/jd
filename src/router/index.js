@@ -107,8 +107,9 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
-  // base: process.env.BASE_URL,
+  // mode: 'history', // hash
+  mode: 'hash',
+  base: process.env.BASE_URL,
   routes
 })
 

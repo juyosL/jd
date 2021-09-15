@@ -34,7 +34,7 @@
           v-for="(item, index) in host"
           :key="index"
           :text="item.keyword"
-          @click="$router.replace({ name: 'Hresult', params: { keyword: item.keyword } })"
+          @click="toHe(item)"
           />
         </div>
       </div>
@@ -70,16 +70,7 @@ export default {
     toHresult () {
       if (this.keyword !== '') {
         // 历史记录
-        if (localStorage.getItem('record')) {
-          var arr = JSON.parse(localStorage.getItem('record'))
-          if (arr.findIndex(item => item === this.keyword) !== -1) {
-            arr.splice(arr.findIndex(item => item === this.keyword), 1)
-          }
-          arr.unshift(this.keyword)
-          localStorage.setItem('record', JSON.stringify(arr))
-        } else {
-          localStorage.setItem('record', JSON.stringify([this.keyword]))
-        }
+        this.addhistory(this.keyword)
         // 搜索
         this.$router.replace({ name: 'Hresult', params: { keyword: this.keyword } })
       } else {
@@ -90,6 +81,23 @@ export default {
     Reomvehistory () {
       localStorage.removeItem('record')
       this.record = []
+    },
+    // 添加历史
+    addhistory (keyword) {
+      if (localStorage.getItem('record')) {
+        var arr = JSON.parse(localStorage.getItem('record'))
+        if (arr.findIndex(item => item === keyword) !== -1) {
+          arr.splice(arr.findIndex(item => item === keyword), 1)
+        }
+        arr.unshift(keyword)
+        localStorage.setItem('record', JSON.stringify(arr))
+      } else {
+        localStorage.setItem('record', JSON.stringify([keyword]))
+      }
+    },
+    toHe (item) {
+      this.addhistory(item.keyword)
+      this.$router.replace({ name: 'Hresult', params: { keyword: item.keyword } })
     },
     hostseach () {
       this.$http.Hostword().then(res => {
