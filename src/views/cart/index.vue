@@ -139,6 +139,12 @@ export default {
   mounted () {
     this.init()
   },
+  beforeRouteEnter (to, from, next) {
+    if (localStorage.getItem('token') && localStorage.getItem('isLogin')) {
+      next()
+    }
+    next('/login')
+  },
   methods: {
     ...mapActions({
       initn: 'cart/init'
@@ -164,13 +170,15 @@ export default {
     // 添加订单
     onSubmit () {
       // 提交订单
-      this.$http.addOrder({
-        token: localStorage.getItem('token'),
-        userid: localStorage.getItem('userid')
-      }).then(res => {
-        localStorage.setItem('time', res.data.time)
-        this.$router.push('/order')
-      })
+      if (localStorage.getItem('isLogin')) {
+        this.$http.addOrder({
+          token: localStorage.getItem('token'),
+          userid: localStorage.getItem('userid')
+        }).then(res => {
+          localStorage.setItem('time', res.data.time)
+          this.$router.push('/order')
+        })
+      }
     },
     init () {
       if (localStorage.getItem('isLogin')) {

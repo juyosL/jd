@@ -148,9 +148,9 @@ export default {
     },
     // 商品更新
     onLoad () {
-      // console.log(this.Classification, this.$route.params)
+      console.log(this.Classification, this.$route.params)
       // this.loading = true
-      if (this.Classification) {
+      if (this.Classification && this.$route.params.keyword.indexOf(',') === -1) {
         this.$http.Prosearch({ count: this.count++, keyword: this.$route.params.keyword }).then(res => {
           this.info(res)
         })

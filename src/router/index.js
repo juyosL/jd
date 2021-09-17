@@ -95,6 +95,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "hresult" */'../views/hresult/index.vue')
   },
   {
+    // 用户设置
     path: '/settings',
     name: 'Settings',
     component: () => import(/* webpackChunkName: "settings" */'../views/settings/index.vue')

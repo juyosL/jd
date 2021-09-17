@@ -76,6 +76,12 @@ export default {
       address: ''
     }
   },
+  beforeRouteEnter (to, from, next) {
+    if (localStorage.getItem('token') && localStorage.getItem('isLogin')) {
+      next()
+    }
+    next('/login')
+  },
   mounted () {
     this.$http.Getuser({ userid: localStorage.getItem('userid') })
       .then(res => {
