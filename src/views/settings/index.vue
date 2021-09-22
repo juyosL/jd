@@ -44,7 +44,7 @@ export default {
       localStorage.removeItem('token')
       localStorage.removeItem('isLogin')
       this.changeLoginState(false)
-      this.$touter.replace('/login')
+      this.$router.replace('/login')
     },
     fn (flag) {
       // true 修改用户名

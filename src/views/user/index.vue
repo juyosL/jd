@@ -80,6 +80,9 @@ export default {
     if (localStorage.getItem('token') && localStorage.getItem('isLogin')) {
       next()
     }
+    if (from === '/login') {
+      next('/home')
+    }
     next('/login')
   },
   mounted () {
