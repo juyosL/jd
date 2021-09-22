@@ -79,11 +79,9 @@ export default {
   beforeRouteEnter (to, from, next) {
     if (localStorage.getItem('token') && localStorage.getItem('isLogin')) {
       next()
+    } else {
+      next('/login')
     }
-    if (from === '/login') {
-      next('/home')
-    }
-    next('/login')
   },
   mounted () {
     this.$http.Getuser({ userid: localStorage.getItem('userid') })

@@ -142,8 +142,9 @@ export default {
   beforeRouteEnter (to, from, next) {
     if (localStorage.getItem('token') && localStorage.getItem('isLogin')) {
       next()
+    } else {
+      next('/login')
     }
-    next('/login')
   },
   methods: {
     ...mapActions({
