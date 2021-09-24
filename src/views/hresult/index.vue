@@ -49,7 +49,6 @@
 </template>
 <script>
 import { Prolist } from '../../components'
-import { mapState } from 'vuex'
 import { NavBar, Button, Search, Icon, DropdownMenu, DropdownItem, Cell, Divider, List, Empty } from 'vant'
 export default {
   components: {
@@ -88,11 +87,6 @@ export default {
       ],
       path: ''
     }
-  },
-  computed: {
-    ...mapState({
-      Classification: state => state.hresult.Classification
-    })
   },
   watch: {
     $route: {
@@ -148,9 +142,7 @@ export default {
     },
     // 商品更新
     onLoad () {
-      console.log(this.Classification, this.$route.params)
-      // this.loading = true
-      if (this.Classification && this.$route.params.keyword.indexOf(',') === -1) {
+      if (this.$route.params.keyword.indexOf(',') === -1) {
         this.$http.Prosearch({ count: this.count++, keyword: this.$route.params.keyword }).then(res => {
           this.info(res)
         })

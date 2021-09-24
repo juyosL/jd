@@ -34,7 +34,6 @@
 </template>
 <script>
 import { Tabbar } from '@/components'
-import { mapMutations } from 'vuex'
 import { NavBar, Icon, Sidebar, SidebarItem } from 'vant'
 export default {
   components: {
@@ -58,9 +57,6 @@ export default {
     })
   },
   methods: {
-    ...mapMutations({
-      Changestate: 'hresult/Changestate'
-    }),
     toSku (index) {
       this.$http.SKU({ category: this.Spulist[index] })
         .then(res => {
@@ -69,7 +65,6 @@ export default {
         })
     },
     toHresult (brand) {
-      this.Changestate(false)
       var keyword = `${this.Spulist[this.activeKey]},${brand}`
       this.$router.push({ name: 'Hresult', params: { keyword } })
     }

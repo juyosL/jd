@@ -43,7 +43,6 @@
 </template>
 <script>
 import { NavBar, Button, Search, Icon } from 'vant'
-import { mapMutations } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -64,9 +63,6 @@ export default {
     this.hostseach()
   },
   methods: {
-    ...mapMutations({
-      Changestate: 'hresult/Changestate'
-    }),
     toHresult () {
       if (this.keyword !== '') {
         // 历史记录
@@ -102,7 +98,6 @@ export default {
     hostseach () {
       this.$http.Hostword().then(res => {
         this.host = res.data.data
-        this.Changestate(true)
       })
     }
   }
